@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadzenHelper", "RadzenHelper.csproj", "{407B545F-8260-489E-8CD8-F2880E74913E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{407B545F-8260-489E-8CD8-F2880E74913E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{407B545F-8260-489E-8CD8-F2880E74913E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{407B545F-8260-489E-8CD8-F2880E74913E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{407B545F-8260-489E-8CD8-F2880E74913E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {22241782-4596-4F31-A97B-EE57E3E76367}
+	EndGlobalSection
+EndGlobal
