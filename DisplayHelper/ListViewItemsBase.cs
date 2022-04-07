@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RadzenHelper.DisplayHelper
+namespace RadzenHelper
 {
     public class ListViewItemsBase<T> where T : UpdatableBase
     {
@@ -16,9 +16,9 @@ namespace RadzenHelper.DisplayHelper
         T? itemToInsert = default;
 
 
-        public ListViewItemsBase(List<T> items)
+        public ListViewItemsBase()
         {
-            this.items = items;
+            LoadItems();
         }
 
         public List<T> Items
@@ -27,7 +27,7 @@ namespace RadzenHelper.DisplayHelper
             {
                 return items;
             }
-            internal set
+            set
             {
                 items = value;
             }
@@ -35,7 +35,7 @@ namespace RadzenHelper.DisplayHelper
 
         public RadzenDataGrid<T>? ItemGrid { get => itemGrid; set => itemGrid = value; }
 
-        public virtual void OnChangedCollectionChanged()
+        public virtual async Task OnChangedCollectionChanged()
         {
             
         }
@@ -56,6 +56,12 @@ namespace RadzenHelper.DisplayHelper
 
             itemToInsert = UpdatableBase.GetNew<T>();
             await itemGrid.InsertRow(itemToInsert);
+        }
+
+
+        public virtual void LoadItems()
+        {
+            items = new();
         }
         
         public virtual async Task OnCreateRow(T item)
