@@ -28,7 +28,8 @@ namespace RadzenHelper
         {
             var properties = newObject.GetType()
                                       .GetProperties()
-                                      .Where(x=> x.Name != nameof(Id));
+                                      .Where(x => x.Name != nameof(Id))
+                                      .Where(x => x.CanWrite && x.CanRead);
 
             foreach (var property in properties)
             {

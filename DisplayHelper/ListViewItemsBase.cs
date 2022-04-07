@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RadzenHelper.DisplayHelper
 {
-    public class ListContentBase<T> where T : UpdatableBase
+    public class ListViewItemsBase<T> where T : UpdatableBase
     {
         private List<T> items = new();
 
@@ -15,7 +16,7 @@ namespace RadzenHelper.DisplayHelper
         T? itemToInsert = default;
 
 
-        public ListContentBase(List<T> items)
+        public ListViewItemsBase(List<T> items)
         {
             this.items = items;
         }
@@ -37,6 +38,15 @@ namespace RadzenHelper.DisplayHelper
         public virtual void OnChangedCollectionChanged()
         {
             
+        }
+
+
+
+        public virtual List<(PropertyInfo Info, ColumnDefinitionAttribute Attribute)> GetColumns()
+        {
+            return Items.GetNestedType()
+                        .GetPropertyWithAttribute<ColumnDefinitionAttribute>()
+                        ?? new();
         }
 
         public virtual async Task InsertRow()

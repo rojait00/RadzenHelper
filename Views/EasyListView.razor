@@ -5,12 +5,12 @@
 
 <h3>EasyListView</h3>
 
-<RadzenDataGrid @ref="Content.ItemGrid" AllowFiltering="true" AllowPaging="true" PageSize="20" AllowSorting="true" EditMode="DataGridEditMode.Multiple"
-                Data="@Content.Items" RowUpdate="@Content.OnUpdateRow" RowCreate="@Content.OnCreateRow" TItem="TItem">
+<RadzenDataGrid @ref="Items.ItemGrid" AllowFiltering="true" AllowPaging="true" PageSize="20" AllowSorting="true" EditMode="DataGridEditMode.Multiple"
+                Data="@Items.Items" RowUpdate="@Items.OnUpdateRow" RowCreate="@Items.OnCreateRow" TItem="TItem">
     <Columns>
         @if (!UseCustomColumns)
         {
-            foreach ((PropertyInfo info, ColumnDefinitionAttribute attribute) in GetColumns())
+            foreach ((PropertyInfo info, ColumnDefinitionAttribute attribute) in Items.GetColumns())
             {
                 <EasyColumn PropertyInfo="info" Attribute="attribute" TableMode="TableDisplayMode" />
             }
@@ -25,39 +25,44 @@
         {
             <RadzenDataGridColumn TItem="TItem" Context="sampleBlazorModelsSampleTItem" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10%">
                 <Template Context="item">
-                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => Content.EditRow(item))" @onclick:stopPropagation="true">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => Items.EditRow(item))" @onclick:stopPropagation="true">
                     </RadzenButton>
                 </Template>
                 <EditTemplate Context="item">
-                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="@((args) => Content.SaveRow(item))">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="@((args) => Items.SaveRow(item))">
                     </RadzenButton>
-                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@((args) => Content.CancelEdit(item))">
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@((args) => Items.CancelEdit(item))">
                     </RadzenButton>
                 </EditTemplate>
             </RadzenDataGridColumn>
         }
 
-        @if (OnUpload != null)
-        {
-            <RadzenDataGridColumn TItem="TItem" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="5%">
-                <Template Context="item">
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="upload" Class="m-1" Click="@(args => OnUpload?.Invoke(item))" />
-                </Template>
-                <EditTemplate Context="item">
-                </EditTemplate>
-            </RadzenDataGridColumn>
-        }
 
-        @if (AllowDelete)
+
+        @if (AllowDelete || SpecialActions.Any())
         {
-            <RadzenDataGridColumn TItem="TItem" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="5%">
+            <RadzenDataGridColumn TItem="TItem" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                 <Template Context="item">
-                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Class="m-1" Click="@(args => Content.DeleteRow(item))" @onclick:stopPropagation="true">
-                    </RadzenButton>
+                    @if (AllowDelete)
+                    {
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Class="m-1" Click="@(args => Items.DeleteRow(item))" @onclick:stopPropagation="true" />
+                    }
+
+                    @foreach(var action in SpecialActions)
+                    {
+                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item))"/>
+                    }
                 </Template>
                 <EditTemplate Context="item">
-                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Class="m-1" Click="@(args => Content.DeleteRow(item))">
-                    </RadzenButton>
+                    @if (AllowDelete)
+                    {
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Class="m-1" Click="@(args => Items.DeleteRow(item))" />
+                    }
+
+                    @foreach(var action in SpecialActions)
+                    {
+                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item))"/>
+                    }
                 </EditTemplate>
             </RadzenDataGridColumn>
         }
@@ -67,8 +72,7 @@
 @code
 {
     [Parameter]
-    public RenderFragment? ChildContent { get; set; }
-
+    public RenderFragment? ChildContent { get; set; } = null;
 
     [Parameter]
     public bool AllowEdit { get; set; } = true;
@@ -83,28 +87,15 @@
     public DisplayMode TableDisplayMode { get; set; } = DisplayMode.Always;
 
     [Parameter]
-    public Action<TItem>? OnUpload { get; set; }
-
-    [Parameter]
-    public Action<TItem>? OnChanged { get; set; }
+    public IEnumerable<SpecialRowAction<TItem>> SpecialActions { get; set; } = new List<SpecialRowAction<TItem>>();
 
 
     [Parameter]
-    public ListContentBase<TItem> Content { get; set; }
+    public ListViewItemsBase<TItem> Items { get; set; }
 
 
-    public EasyListView(ListContentBase<TItem> content)
+    public EasyListView(ListViewItemsBase<TItem> items)
     {
-        Content = content;
+        Items = items;
     }
-
-
-    private List<(PropertyInfo Info, ColumnDefinitionAttribute Attribute)> GetColumns()
-    {
-        return Content.Items.GetNestedType()
-                            .GetPropertyWithAttribute<ColumnDefinitionAttribute>()
-                            ?? new();
-    }
-
-
 }
