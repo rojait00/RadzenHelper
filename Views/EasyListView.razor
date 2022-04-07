@@ -3,16 +3,34 @@
 
 @typeparam TItem where TItem : UpdatableBase
 
-<h3>EasyListView</h3>
-
 <RadzenDataGrid @ref="Items.ItemGrid" AllowFiltering="true" AllowPaging="true" PageSize="20" AllowSorting="true" EditMode="DataGridEditMode.Multiple"
                 Data="@Items.Items" RowUpdate="@Items.OnUpdateRow" RowCreate="@Items.OnCreateRow" TItem="TItem">
     <Columns>
-        @if (!UseCustomColumns)
+        @if (!UseCustomColumns || true)
         {
             foreach ((PropertyInfo info, ColumnDefinitionAttribute attribute) in Items.GetColumns())
             {
-                <EasyColumn PropertyInfo="info" Attribute="attribute" TableMode="TableDisplayMode" />
+                <RadzenDataGridColumn Title="@(attribute.DisplayName)" TItem="TItem" Filterable=false Reorderable=false>
+                    <Template Context="item">
+                        @{
+                            SetItem(item, info);
+                        }
+                        @values[item].Value
+                    </Template>
+                    <EditTemplate Context="item">
+                        @{
+                            SetItem(item, info);
+                        }
+
+                        <RadzenTextBox @bind-Value="values[item].Value" Style="width:100%; display: block" Name="@info.Name" />
+
+                        @if (attribute.IsRequired)
+                        {
+                            <RadzenRequiredValidator Text="Required!" Component="@info.Name" Popup="true" />
+                        }
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                @*<EasyColumn PropertyInfo="info" Attribute="attribute" TableMode="TableDisplayMode" />*@
             }
         }
 
@@ -41,16 +59,16 @@
 
         @if (AllowDelete || SpecialActions.Any())
         {
-            <RadzenDataGridColumn TItem="TItem" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+            <RadzenDataGridColumn TItem="TItem" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10%">
                 <Template Context="item">
                     @if (AllowDelete)
                     {
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Class="m-1" Click="@(args => Items.DeleteRow(item))" @onclick:stopPropagation="true" />
                     }
 
-                    @foreach(var action in SpecialActions)
+                    @foreach (var action in SpecialActions)
                     {
-                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item))"/>
+                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item))" />
                     }
                 </Template>
                 <EditTemplate Context="item">
@@ -59,9 +77,9 @@
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Class="m-1" Click="@(args => Items.DeleteRow(item))" />
                     }
 
-                    @foreach(var action in SpecialActions)
+                    @foreach (var action in SpecialActions)
                     {
-                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item))"/>
+                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item))" />
                     }
                 </EditTemplate>
             </RadzenDataGridColumn>
@@ -91,11 +109,39 @@
 
 
     [Parameter]
+    [EditorRequired]
     public ListViewItemsBase<TItem> Items { get; set; }
 
 
-    public EasyListView(ListViewItemsBase<TItem> items)
+    Dictionary<TItem, ValueDummy> values = new Dictionary<TItem, ValueDummy>();
+
+    void SetItem(TItem item, PropertyInfo info)
     {
-        Items = items;
+        values[item] = new ValueDummy(item, info);
+    }
+
+    class ValueDummy
+    {
+        private readonly TItem item;
+        private readonly PropertyInfo info;
+
+        public ValueDummy(TItem item, PropertyInfo info)
+        {
+            this.item = item;
+            this.info = info;
+        }
+
+        public string Value
+        {
+            get
+            {
+                return info.GetValue(item)?.ToString() ?? "";
+            }
+            set
+            {
+                info.SetValue(item, value);
+
+            }
+        }
     }
 }

@@ -18,7 +18,11 @@ namespace RadzenHelper
 
         public ListViewItemsBase()
         {
-            LoadItems();
+
+        }
+        public virtual async Task Init()
+        {
+            await LoadItems();
         }
 
         public List<T> Items
@@ -37,7 +41,7 @@ namespace RadzenHelper
 
         public virtual async Task OnChangedCollectionChanged()
         {
-            
+            await new Task(() => { int i = 0; i++; });
         }
 
 
@@ -59,11 +63,14 @@ namespace RadzenHelper
         }
 
 
-        public virtual void LoadItems()
+        public virtual async Task LoadItems()
         {
-            items = new();
+            if (itemGrid != null)
+            {
+                await itemGrid.Reload();
+            }
         }
-        
+
         public virtual async Task OnCreateRow(T item)
         {
             await AddOrUpdateAsync(item);
@@ -99,7 +106,7 @@ namespace RadzenHelper
 
             await itemGrid.UpdateRow(item);
 
-            OnChangedCollectionChanged();
+            await OnChangedCollectionChanged();
         }
 
         public virtual void CancelEdit(T item)
