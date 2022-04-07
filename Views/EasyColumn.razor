@@ -1,0 +1,59 @@
+﻿@using RegexReplacer.Shared
+@using RegexReplacer.Shared.DisplayHelper
+@using System.Reflection
+
+@if (TableMode.ShouldBeVisable(Attribute.DisplayMode) && PropertyInfo.PropertyType == typeof(string))
+{
+    <RadzenDataGridColumn Property="@PropertyInfo.Name" Title="@Attribute.DisplayName" TItem="UpdatableBase">
+        <EditTemplate Context="item">
+            @{
+                SetItem(item);
+            }
+
+            <RadzenTextBox @bind-Value="Value" Style="width:100%; display: block" Name="@PropertyInfo.Name" />
+
+            @if (Attribute.IsRequired)
+            {
+                <RadzenRequiredValidator Text="Required!" Component="@PropertyInfo.Name" Popup="true" />
+            }
+        </EditTemplate>
+    </RadzenDataGridColumn>
+}
+
+@code {
+
+    public EasyColumn(PropertyInfo propertyInfo, ColumnDefinitionAttribute attribute)
+    {
+        PropertyInfo = propertyInfo;
+        Attribute = attribute;
+    }
+
+    [Parameter]
+    public PropertyInfo PropertyInfo { get; set; }
+
+    [Parameter]
+    public ColumnDefinitionAttribute Attribute { get; set; }
+
+    [Parameter]
+    public DisplayMode TableMode { get; set; } = DisplayMode.Always;
+
+    UpdatableBase? item;
+
+    public string Value
+    {
+        get
+        {
+            return PropertyInfo.GetValue(item)?.ToString() ?? "";
+        }
+        set
+        {
+            PropertyInfo.SetValue(item, value);
+
+        }
+    }
+
+    public void SetItem(UpdatableBase rowItem)
+    {
+        item = rowItem;
+    }
+}
