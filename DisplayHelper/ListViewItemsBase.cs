@@ -25,6 +25,7 @@ namespace RadzenHelper
             await LoadItems();
         }
 
+
         public List<T> Items
         {
             get
@@ -36,6 +37,8 @@ namespace RadzenHelper
                 items = value;
             }
         }
+
+        public T? ItemToInsert { get => itemToInsert; set => itemToInsert = value; }
 
         public RadzenDataGrid<T>? ItemGrid { get => itemGrid; set => itemGrid = value; }
 
@@ -161,6 +164,12 @@ namespace RadzenHelper
                 await itemGrid.UpdateRow(item);
             }
             await itemGrid.Reload();
+        }
+
+        public string GetDisplayName()
+        {
+            var methodeName = nameof(UpdatableBase.GetDisplayName);
+            return (string?)typeof(T).GetMethod(methodeName)?.Invoke(null, null)?? UpdatableBase.GetDisplayName();
         }
     }
 }

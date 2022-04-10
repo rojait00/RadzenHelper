@@ -21,7 +21,7 @@ namespace RadzenHelper
 
         public static T GetNew<T>() where T : UpdatableBase
         {
-            return (T)new UpdatableBase();
+            return Activator.CreateInstance<T>();
         }
 
         public virtual void Update(UpdatableBase newObject)
@@ -45,6 +45,11 @@ namespace RadzenHelper
                     property.SetValue(newObject, value);
                 }
             }
+        }
+
+        public static string GetDisplayName()
+        {
+            return "Row";
         }
     }
 }

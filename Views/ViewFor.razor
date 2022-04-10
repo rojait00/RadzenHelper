@@ -1,0 +1,70 @@
+﻿@using RadzenHelper.Code
+
+@if (Value != default)
+{
+    @switch (Value)
+    {
+        case string @string:
+            <RadzenTextBox @bind-Value="@StringValue" Style="@Style" Name="@Name" />
+            break;
+        case int @number:
+            <RadzenNumeric TValue="int" @bind-Value=@IntValue Placeholder="Enter or clear value" Style="@Style" Name="@Name" />
+            break;
+        case double @double:
+            <RadzenNumeric TValue="double" @bind-Value=@DoubleValue Placeholder="Enter or clear value" Style="@Style" Name="@Name" />
+            break;
+        case Enum @enum:
+            <RadzenDropDown AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                Placeholder="Select Option..." Multiple="false" Style="@Style" Name="@Name"
+                @bind-Value=@EnumValue Data=@values />
+            break;
+        default:
+            <div> Type Not Supported! @Value.GetType().Name </div>
+            break;
+    }
+}
+
+@code {
+    [Parameter]
+    public object? Value
+    {
+        get => _value;
+        set
+        {
+            if (value?.ToString() == _value?.ToString())
+                return;
+
+            _value = value;
+            if (ValueChanged.HasDelegate)
+            {
+                ValueChanged.InvokeAsync(_value);
+            }
+        }
+    }
+    [Parameter]
+    public EventCallback<object?> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Style { get; set; } = "";
+
+    [Parameter]
+    public string Name { get; set; } = "";
+
+    private string StringValue { get => (string?)Value ?? ""; set => Value = value; }
+    private int IntValue { get => (int?)Value ?? -1; set => Value = value; }
+    private double DoubleValue { get => (double?)Value ?? -1.0; set => Value = value; }
+    private Enum? EnumValue { get => (Enum?)Value; set => Value = value; }
+
+    private object? _value;
+
+    List<Enum> values = new();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (Value is Enum && EnumValue != null)
+        {
+            values = EnumValue.GetEnums();
+        }
+    }
+}

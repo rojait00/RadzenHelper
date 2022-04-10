@@ -3,10 +3,16 @@
 
 @typeparam TItem where TItem : UpdatableBase
 
-<RadzenDataGrid @ref="Items.ItemGrid" AllowFiltering="true" AllowPaging="true" PageSize="20" AllowSorting="true" EditMode="DataGridEditMode.Multiple"
+@if (AllowAddNewItem)
+{
+    <br />
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="@("Add New " + Items.GetDisplayName())" Click="@Items.InsertRow" Disabled=@(Items.ItemGrid != null) />
+}
+
+<RadzenDataGrid @ref="Items.ItemGrid" AllowFiltering="false" AllowPaging="true" PageSize="20" AllowSorting="false" EditMode="DataGridEditMode.Multiple"
                 Data="@Items.Items" RowUpdate="@Items.OnUpdateRow" RowCreate="@Items.OnCreateRow" TItem="TItem">
     <Columns>
-        @if (!UseCustomColumns || true)
+        @if (!UseCustomColumns)
         {
             foreach ((PropertyInfo info, ColumnDefinitionAttribute attribute) in Items.GetColumns())
             {
@@ -15,14 +21,21 @@
                         @{
                             SetItem(item, info);
                         }
-                        @values[item].Value
+                        @(values[item].Value?.ToString() ?? "")
                     </Template>
                     <EditTemplate Context="item">
                         @{
                             SetItem(item, info);
                         }
 
-                        <RadzenTextBox @bind-Value="values[item].Value" Style="width:100%; display: block" Name="@info.Name" />
+                        @if (attribute.IsReadOnly)
+                        {
+                            @(values[item].Value?.ToString() ?? "")
+                        }
+                        else
+                        {
+                            <ViewFor @bind-value="values[item].Value" Style="width:100%; display: block" Name="@info.Name" />
+                        }
 
                         @if (attribute.IsRequired)
                         {
@@ -30,7 +43,6 @@
                         }
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                @*<EasyColumn PropertyInfo="info" Attribute="attribute" TableMode="TableDisplayMode" />*@
             }
         }
 
@@ -96,6 +108,9 @@
     public bool AllowEdit { get; set; } = true;
 
     [Parameter]
+    public bool AllowAddNewItem { get; set; } = true;
+
+    [Parameter]
     public bool AllowDelete { get; set; } = true;
 
     [Parameter]
@@ -110,7 +125,7 @@
 
     [Parameter]
     [EditorRequired]
-    public ListViewItemsBase<TItem> Items { get; set; }
+    public ListViewItemsBase<TItem> Items { get; set; } = null!;
 
 
     Dictionary<TItem, ValueDummy> values = new Dictionary<TItem, ValueDummy>();
@@ -131,11 +146,11 @@
             this.info = info;
         }
 
-        public string Value
+        public object? Value
         {
             get
             {
-                return info.GetValue(item)?.ToString() ?? "";
+                return info.GetValue(item);
             }
             set
             {
