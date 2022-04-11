@@ -1,6 +1,10 @@
 ﻿@using RadzenHelper
 @using System.Reflection
 
+@inject HttpClient http
+@inject NotificationService notificationService
+@inject NavigationManager navigationManager
+
 @typeparam TItem where TItem : UpdatableBase
 
 @if (AllowAddNewItem)
@@ -73,31 +77,38 @@
             </RadzenDataGridColumn>
         }
 
-
-
-        @if (AllowDelete || SpecialActions.Any())
+        @if (SpecialActions.Any())
         {
-            <RadzenDataGridColumn TItem="TItem" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10%">
+            <RadzenDataGridColumn TItem="TItem" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="@((SpecialActions.Count() * 7) + "%")">
+                <Template Context="item">
+                    @foreach (var action in SpecialActions)
+                    {
+                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item, GetServiceContainer()))" />
+                    }
+                </Template>
+                <EditTemplate Context="item">
+                    @foreach (var action in SpecialActions)
+                    {
+                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item, GetServiceContainer()))" />
+                    }
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        }
+
+
+        @if (AllowDelete)
+        {
+            <RadzenDataGridColumn TItem="TItem" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7%">
                 <Template Context="item">
                     @if (AllowDelete)
                     {
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Class="m-1" Click="@(args => Items.DeleteRow(item))" @onclick:stopPropagation="true" />
-                    }
-
-                    @foreach (var action in SpecialActions)
-                    {
-                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item))" />
                     }
                 </Template>
                 <EditTemplate Context="item">
                     @if (AllowDelete)
                     {
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Class="m-1" Click="@(args => Items.DeleteRow(item))" />
-                    }
-
-                    @foreach (var action in SpecialActions)
-                    {
-                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item))" />
                     }
                 </EditTemplate>
             </RadzenDataGridColumn>
@@ -135,6 +146,16 @@
 
 
     Dictionary<(TItem, PropertyInfo), ValueDummy> values = new();
+
+    public ServiceContainer GetServiceContainer()
+    {
+        return new ServiceContainer
+            {
+                NavigationManager = navigationManager,
+                Http = http,
+                NotificationService = notificationService
+            };
+    }
 
     void SetItem(TItem item, PropertyInfo info)
     {

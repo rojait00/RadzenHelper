@@ -6,6 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Views\DropZone.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Views\DropZone.razor.css" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />

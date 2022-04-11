@@ -8,17 +8,19 @@ namespace RadzenHelper
 {
     public class SpecialRowAction<T>
     {
-        public SpecialRowAction(string icon, Action<T> onClick, ButtonStyle style = ButtonStyle.Primary)
+        public SpecialRowAction(string icon, Action<T, ServiceContainer> onClick, ButtonStyle style = ButtonStyle.Primary)
         {
             Icon = icon;
             OnClick = onClick;
             Style = style;
         }
 
-        public Action<T> OnClick { get; set; }
+        public Action<T, ServiceContainer> OnClick { get; set; }
 
         public string Icon { get; set; }
 
         public ButtonStyle Style { get; set; }
+
+        public ServiceContainer? ServiceContainer { get; set; }
     }
 }
