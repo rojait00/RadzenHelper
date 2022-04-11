@@ -7,11 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Views\DropZone.razor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Views\DropZone.razor.css" />
+    <None Include="wwwroot\dropZone.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 
