@@ -42,9 +42,12 @@ namespace RadzenHelper
 
         public RadzenDataGrid<T>? ItemGrid { get => itemGrid; set => itemGrid = value; }
 
-        public virtual async Task OnChangedCollectionChanged()
+        public virtual async Task OnChangedCollectionChanged(T? item)
         {
-            await new Task(() => { int i = 0; i++; });
+            if (itemGrid != null)
+            {
+                await itemGrid.Reload();
+            }
         }
 
 
@@ -109,7 +112,7 @@ namespace RadzenHelper
 
             await itemGrid.UpdateRow(item);
 
-            await OnChangedCollectionChanged();
+            await OnChangedCollectionChanged(item);
         }
 
         public virtual void CancelEdit(T item)
@@ -169,7 +172,7 @@ namespace RadzenHelper
         public string GetDisplayName()
         {
             var methodeName = nameof(UpdatableBase.GetDisplayName);
-            return (string?)typeof(T).GetMethod(methodeName)?.Invoke(null, null)?? UpdatableBase.GetDisplayName();
+            return (string?)typeof(T).GetMethod(methodeName)?.Invoke(null, null) ?? UpdatableBase.GetDisplayName();
         }
     }
 }

@@ -6,7 +6,7 @@
 @if (AllowAddNewItem)
 {
     <br />
-    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="@("Add New " + Items.GetDisplayName())" Click="@Items.InsertRow" Disabled=@(Items.ItemGrid != null) />
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="@("Add New " + Items.GetDisplayName())" Click="@Items.InsertRow" Disabled=@(Items.ItemToInsert != null) />
 }
 
 <RadzenDataGrid @ref="Items.ItemGrid" AllowFiltering="false" AllowPaging="true" PageSize="20" AllowSorting="false" EditMode="DataGridEditMode.Multiple"
@@ -21,20 +21,20 @@
                         @{
                             SetItem(item, info);
                         }
-                        @(values[item].Value?.ToString() ?? "")
+                        @(values[(item,info)].Value?.ToString() ?? "")
                     </Template>
                     <EditTemplate Context="item">
                         @{
                             SetItem(item, info);
                         }
 
-                        @if (attribute.IsReadOnly)
+                        @if (attribute.IsReadOnly || item.IsReadOnly)
                         {
-                            @(values[item].Value?.ToString() ?? "")
+                            @(values[(item,info)].Value?.ToString() ?? "")
                         }
                         else
                         {
-                            <ViewFor @bind-value="values[item].Value" Style="width:100%; display: block" Name="@info.Name" />
+                            <ViewFor @bind-value="values[(item,info)].Value" Style="width:100%; display: block" Name="@info.Name" />
                         }
 
                         @if (attribute.IsRequired)
@@ -55,14 +55,20 @@
         {
             <RadzenDataGridColumn TItem="TItem" Context="sampleBlazorModelsSampleTItem" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10%">
                 <Template Context="item">
-                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => Items.EditRow(item))" @onclick:stopPropagation="true">
-                    </RadzenButton>
+                    @if (!item.IsReadOnly)
+                    {
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => Items.EditRow(item))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    }
                 </Template>
                 <EditTemplate Context="item">
-                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="@((args) => Items.SaveRow(item))">
-                    </RadzenButton>
-                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@((args) => Items.CancelEdit(item))">
-                    </RadzenButton>
+                    @if (!item.IsReadOnly)
+                    {
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="@((args) => Items.SaveRow(item))">
+                        </RadzenButton>
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@((args) => Items.CancelEdit(item))">
+                        </RadzenButton>
+                    }
                 </EditTemplate>
             </RadzenDataGridColumn>
         }
@@ -128,11 +134,11 @@
     public ListViewItemsBase<TItem> Items { get; set; } = null!;
 
 
-    Dictionary<TItem, ValueDummy> values = new Dictionary<TItem, ValueDummy>();
+    Dictionary<(TItem, PropertyInfo), ValueDummy> values = new();
 
     void SetItem(TItem item, PropertyInfo info)
     {
-        values[item] = new ValueDummy(item, info);
+        values[(item, info)] = new ValueDummy(item, info);
     }
 
     class ValueDummy
@@ -154,8 +160,10 @@
             }
             set
             {
-                info.SetValue(item, value);
-
+                if (info.CanWrite)
+                {
+                    info.SetValue(item, value);
+                }
             }
         }
     }

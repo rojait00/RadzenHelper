@@ -10,6 +10,8 @@ namespace RadzenHelper
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
+        public bool IsReadOnly { get; set; } = false;
+
         public UpdatableBase()
         {
         }
@@ -29,7 +31,8 @@ namespace RadzenHelper
             var properties = newObject.GetType()
                                       .GetProperties()
                                       .Where(x => x.Name != nameof(Id))
-                                      .Where(x => x.CanWrite && x.CanRead);
+                                      .Where(x => x.CanWrite && x.CanRead)
+                                      .ToList();
 
             foreach (var property in properties)
             {
@@ -42,7 +45,7 @@ namespace RadzenHelper
                 else
                 {
                     var value = property.GetValue(newObject);
-                    property.SetValue(newObject, value);
+                    property.SetValue(this, value);
                 }
             }
         }
