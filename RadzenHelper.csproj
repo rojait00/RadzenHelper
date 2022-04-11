@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\dropZone.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-
-  <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
