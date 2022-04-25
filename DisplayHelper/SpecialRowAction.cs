@@ -20,7 +20,5 @@ namespace RadzenHelper
         public string Icon { get; set; }
 
         public ButtonStyle Style { get; set; }
-
-        public ServiceContainer? ServiceContainer { get; set; }
     }
 }

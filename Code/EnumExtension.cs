@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RadzenHelper.Code
 {
-    public static class EnumHelper
+    public static class EnumExtension
     {
         public static List<Enum> GetEnums<T>(this T enumVal) where T : Enum
         {
