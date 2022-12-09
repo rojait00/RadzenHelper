@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace RadzenHelper
+namespace RadzenHelper.Code
 {
     public static class TypeExtensionMethods
     {

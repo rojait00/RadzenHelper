@@ -10,7 +10,7 @@ namespace RadzenHelper
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public bool IsReadOnly { get; set; } = false;
+        public virtual bool IsReadOnly { get; set; } = false;
 
         public UpdatableBase()
         {
@@ -26,7 +26,7 @@ namespace RadzenHelper
             return Activator.CreateInstance<T>();
         }
 
-        public virtual void Update(UpdatableBase newObject)
+        public virtual T Update<T>(T newObject) where T : UpdatableBase
         {
             var properties = newObject.GetType()
                                       .GetProperties()
@@ -48,6 +48,8 @@ namespace RadzenHelper
                     property.SetValue(this, value);
                 }
             }
+
+            return (T)this;
         }
 
         public static string GetDisplayName()
