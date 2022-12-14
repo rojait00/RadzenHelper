@@ -18,6 +18,9 @@
                 Placeholder="Select Option..." Multiple="false" Style="@Style" Name="@Name"
                 @bind-Value=@EnumValue Data=@values />
             break;
+        case IHasName @hasName:
+            @(@hasName)
+            break;
         default:
             <div> Type Not Supported! @Value.GetType().Name </div>
             break;

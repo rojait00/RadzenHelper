@@ -1,5 +1,6 @@
 ﻿@using RadzenHelper
 @using System.Reflection
+@using RadzenHelper.DisplayHelper;
 
 @inject HttpClient http
 @inject NotificationService notificationService
@@ -25,7 +26,7 @@
                         @{
                             SetItem(item, info);
                         }
-                        @(values[(item,info)].Value?.ToString() ?? "")
+                        @(values[(item, info)].GetValueAsString())
                     </Template>
                     <EditTemplate Context="item">
                         @{
@@ -34,7 +35,7 @@
 
                         @if (attribute.IsReadOnly || item.IsReadOnly)
                         {
-                            @(values[(item,info)].Value?.ToString() ?? "")
+                            @(values[(item, info)].Value?.ToString() ?? "")
                         }
                         else
                         {
@@ -186,6 +187,17 @@
                     info.SetValue(item, value);
                 }
             }
+        }
+
+        public string GetValueAsString()
+        {
+            var hasName = Value as IHasName;
+            if (hasName != null)
+            {
+                return hasName.Name ?? "N/A";
+            }
+
+            return Value?.ToString() ?? "N/A";
         }
     }
 }
