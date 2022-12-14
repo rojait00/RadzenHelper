@@ -33,5 +33,10 @@ namespace RadzenHelper
         /// default: Always
         /// </summary>
         public DisplayMode DisplayMode { get; set; } = DisplayMode.Always;
+
+        /// <summary>
+        /// default: false
+        /// </summary>
+        public bool AllowMultipleValues { get; set; } = false;
     }
 }
