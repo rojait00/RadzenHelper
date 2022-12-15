@@ -12,8 +12,8 @@ namespace RadzenHelper
     public class ServiceContainer
     {
         public HttpClient? Http { get; set; }
-
-        public IJSRuntime? JsRuntime { get; set; }
+     
+        public DialogService? DialogService { get; set; }
 
         public NotificationService? NotificationService { get; set; }
 

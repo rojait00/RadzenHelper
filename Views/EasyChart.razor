@@ -1,0 +1,62 @@
+﻿@using System.Globalization;
+@using RadzenHelper.DisplayHelper;
+
+@if (ShowOptionsCard)
+{
+    <RadzenCard Class="w-100 mb-4" Style="display: flex; align-items: center; gap: 0.5rem">
+        <RadzenCheckBox @bind-Value="@Trend" Name="Trend"></RadzenCheckBox>
+        <RadzenLabel Text="Trend" For="Trend" Style="margin-right: 1rem;" Class="rz-color-danger-dark" />
+        <RadzenCheckBox @bind-Value="@Median" Name="Median"></RadzenCheckBox>
+        <RadzenLabel Text="Median" For="Median" Style="margin-right: 1rem;" Class="rz-color-success-dark" />
+        <RadzenCheckBox @bind-Value="@Mean" Name="Mean"></RadzenCheckBox>
+        <RadzenLabel Text="Mean" For="Mean" Style="margin-right: 1rem;" Class="rz-color-info-dark" />
+        <RadzenCheckBox @bind-Value="@Mode" Name="Mode"></RadzenCheckBox>
+        <RadzenLabel Text="Mode" For="Mode" Class="rz-color-warning-darker" />
+    </RadzenCard>
+}
+<RadzenChart>
+    
+    <RadzenLineSeries Smooth="false" Data="@ChartValues" Title="KW" CategoryProperty="ValueX" ValueProperty="ValueY" RenderingOrder="1">
+        <RadzenSeriesTrendLine Visible="@Trend" Stroke="var(--rz-danger-dark)" LineType="LineType.Dashed" />
+        <RadzenSeriesMedianLine Visible="@Median" Stroke="var(--rz-success-dark)" LineType="LineType.Dotted" />
+        <RadzenSeriesMeanLine Visible="@Mean" Stroke="var(--rz-info-dark)" LineType="LineType.Dotted" />
+        <RadzenSeriesModeLine Visible="@Mode" Stroke="var(--rz-warning-darker)" LineType="LineType.Dotted" />
+    </RadzenLineSeries>
+    <RadzenCategoryAxis Padding="20" Formatter="@FormatValueX"/>
+    <RadzenValueAxis Formatter="@FormatValueY">
+        <RadzenGridLines Visible="true" />
+        <RadzenAxisTitle Text="@AxisTextX" />
+    </RadzenValueAxis>
+</RadzenChart>
+
+@code {
+    [Parameter]
+    public bool Trend { get; set; } = true;
+    [Parameter]
+    public bool Median { get; set; } = false;
+    [Parameter]
+    public bool Mean { get; set; } = false;
+    [Parameter]
+    public bool Mode { get; set; } = false;
+
+    [Parameter]
+    public bool ShowOptionsCard { get; set; } = false;
+
+    //[Parameter]
+    //public string AxisTextY { get; set; } = "";
+    [Parameter]
+    public string AxisTextX { get; set; } = "";
+
+    [Parameter]
+    public List<ChartValueBase> ChartValues { get; set; } = new();
+
+    string FormatValueY(object value)
+    {
+        return value?.ToString() ?? "";
+    }
+
+    string FormatValueX(object value)
+    {
+        return ""; //value?.ToString() ?? "";
+    }
+}

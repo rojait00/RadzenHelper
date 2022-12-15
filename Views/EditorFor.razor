@@ -1,4 +1,5 @@
 ﻿@using RadzenHelper.Code
+@using RadzenHelper.DisplayHelper;
 
 @if (Value != default)
 {
@@ -15,7 +16,7 @@
             break;
         case Enum @enum:
             <RadzenDropDown AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                Placeholder="Select Option..." Multiple="false" Style="@Style" Name="@Name"
+                Placeholder="Select Option..." Multiple="@AllowMultipleValues" Style="@Style" Name="@Name"
                 @bind-Value=@EnumValue Data=@values />
             break;
         case IHasName @hasName:
@@ -28,6 +29,9 @@
 }
 
 @code {
+    [Parameter]
+    public bool AllowMultipleValues { get; set; } = false;
+
     [Parameter]
     public object? Value
     {

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace RadzenHelper.DisplayHelper
 {
-    public interface IHasName
+    public class ChartValueBase
     {
-        public string Name { get; }
+        public string ValueX { get; set; } = ""; 
+
+        public double ValueY { get; set; }
     }
 }

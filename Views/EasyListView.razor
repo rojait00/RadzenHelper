@@ -5,6 +5,7 @@
 @inject HttpClient http
 @inject NotificationService notificationService
 @inject NavigationManager navigationManager
+@inject DialogService dialogService
 
 @typeparam TItem where TItem : UpdatableBase
 
@@ -39,7 +40,7 @@
                         }
                         else
                         {
-                            <EditorFor @bind-value="values[(item,info)].Value" Style="width:100%; display: block" Name="@info.Name" />
+                            <EditorFor @bind-value="values[(item,info)].Value" Style="width:100%; display: block" Name="@info.Name"  AllowMultipleValues="@(attribute.AllowMultipleValues)"/>
                         }
 
                         @if (attribute.IsRequired)
@@ -84,13 +85,13 @@
                 <Template Context="item">
                     @foreach (var action in SpecialActions)
                     {
-                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item, GetServiceContainer()))" />
+                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(async args => await action.OnClick(item, GetServiceContainer()))" />
                     }
                 </Template>
                 <EditTemplate Context="item">
                     @foreach (var action in SpecialActions)
                     {
-                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(args => action.OnClick(item, GetServiceContainer()))" />
+                        <RadzenButton ButtonStyle="action.Style" Icon="@(action.Icon)" Class="m-1" Click="@(async args => await action.OnClick(item, GetServiceContainer()))" />
                     }
                 </EditTemplate>
             </RadzenDataGridColumn>
@@ -154,7 +155,8 @@
             {
                 NavigationManager = navigationManager,
                 Http = http,
-                NotificationService = notificationService
+                NotificationService = notificationService,
+                DialogService = dialogService
             };
     }
 
