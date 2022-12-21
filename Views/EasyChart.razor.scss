@@ -1,0 +1,147 @@
+﻿$animation-color: #d6d6d6;
+$atroke-still-color: #232323;
+
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 75px;
+    width: 75px;
+}
+
+/*.loading {
+    -webkit-transform: translate(-50%, -50%) rotate(45deg) scale(1);
+    transform: translate(-50%, -50%) rotate(45deg) scale(1);
+}
+
+.stroke-still {
+    stroke: $atroke-still-color;
+}
+
+.stroke-animation {
+    -webkit-animation: stroke-spacing 1.7s ease-in, stroke-color 5.8s linear;
+    animation: stroke-spacing 1.7s ease-in, stroke-color 5.8s linear;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-delay: 0;
+    animation-delay: 0;
+    -webkit-animation-direction: normal;
+    animation-direction: normal;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-play-state: running;
+    animation-play-state: running;
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
+}
+
+@-webkit-keyframes stroke-spacing {
+    0% {
+        stroke-dasharray: 0 200;
+    }
+
+    45% {
+        stroke-dashoffset: 0;
+        stroke-dasharray: 200 200;
+    }
+
+    90% {
+        stroke-dashoffset: -200;
+        stroke-dasharray: 200 200;
+    }
+
+    100% {
+        stroke-dashoffset: -200;
+        stroke-dasharray: 200 200;
+    }
+}
+
+@keyframes stroke-spacing {
+    0% {
+        stroke-dasharray: 0 200;
+    }
+
+    45% {
+        stroke-dashoffset: 0;
+        stroke-dasharray: 200 200;
+    }
+
+    90% {
+        stroke-dashoffset: -200;
+        stroke-dasharray: 200 200;
+    }
+
+    100% {
+        stroke-dashoffset: -200;
+        stroke-dasharray: 200 200;
+    }
+}
+
+@-webkit-keyframes stroke-color {
+    0% {
+        stroke: $animation-color;
+    }
+
+    24% {
+        stroke: $animation-color;
+    }
+
+    25% {
+        stroke: $animation-color;
+    }
+
+    49% {
+        stroke: $animation-color;
+    }
+
+    50% {
+        stroke: $animation-color;
+    }
+
+    74% {
+        stroke: $animation-color;
+    }
+
+    75% {
+        stroke: $animation-color;
+    }
+
+    99% {
+        stroke: $animation-color;
+    }
+}
+
+@keyframes stroke-color {
+    0% {
+        stroke: $animation-color;
+    }
+
+    24% {
+        stroke: $animation-color;
+    }
+
+    25% {
+        stroke: $animation-color;
+    }
+
+    49% {
+        stroke: $animation-color;
+    }
+
+    50% {
+        stroke: $animation-color;
+    }
+
+    74% {
+        stroke: $animation-color;
+    }
+
+    75% {
+        stroke: $animation-color;
+    }
+
+    99% {
+        stroke: $animation-color;
+    }
+}
+*/

@@ -18,15 +18,17 @@
 
 @if (isLoading)
 {
-    <svg width="200" height="200" viewBox="0 0 100 100" class="loading">
+    @("Daten werden ausgewertet...")
+    @*<RadzenIcon Icon="@(MaterialIcons.HourglassFull)" class="loading"/>*@
+    @*<svg width="75" height="75" viewBox="0 0 100 100" class="loading">
         <polyline class="line-cornered stroke-still" points="0,0 100,0 100,100" stroke-width="10" fill="none"></polyline>
         <polyline class="line-cornered stroke-still" points="0,0 0,100 100,100" stroke-width="10" fill="none"></polyline>
         <polyline class="line-cornered stroke-animation" points="0,0 100,0 100,100" stroke-width="10" fill="none"></polyline>
         <polyline class="line-cornered stroke-animation" points="0,0 0,100 100,100" stroke-width="10" fill="none"></polyline>
-    </svg>
+    </svg>*@
 }
 <RadzenChart @ref="chartRef">
-    <RadzenLineSeries Smooth="false" Data="@ChartValues" Title="MW" CategoryProperty="ValueX" ValueProperty="ValueY" RenderingOrder="1">
+    <RadzenLineSeries Smooth="true" Data="@ChartValues" Title="MW" CategoryProperty="ValueX" ValueProperty="ValueY" RenderingOrder="1">
         <RadzenSeriesTrendLine Visible="@Trend" Stroke="var(--rz-danger-dark)" LineType="LineType.Dashed" />
         <RadzenSeriesMedianLine Visible="@Median" Stroke="var(--rz-success-dark)" LineType="LineType.Dotted" />
         <RadzenSeriesMeanLine Visible="@Mean" Stroke="var(--rz-info-dark)" LineType="LineType.Dotted" />
@@ -36,7 +38,7 @@
         <RadzenGridLines Visible="false" />
         <RadzenAxisTitle Text="@AxisTextY" />
     </RadzenCategoryAxis>
-    <RadzenValueAxis Formatter="@FormatValueY">
+    <RadzenValueAxis Formatter="@FormatValueY" Min="0">
         <RadzenGridLines Visible="true" />
         <RadzenAxisTitle Text="@AxisTextX" />
     </RadzenValueAxis>
