@@ -8,7 +8,7 @@ namespace RadzenHelper.DisplayHelper
 {
     public class ChartValueBase
     {
-        public string ValueX { get; set; } = ""; 
+        public object ValueX { get; set; } = ""; 
 
         public double ValueY { get; set; }
     }

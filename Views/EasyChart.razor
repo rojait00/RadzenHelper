@@ -1,5 +1,6 @@
 ﻿@using System.Globalization;
 @using RadzenHelper.DisplayHelper;
+@using RadzenHelper.Extensions;
 
 @if (ShowOptionsCard)
 {
@@ -14,15 +15,27 @@
         <RadzenLabel Text="Mode" For="Mode" Class="rz-color-warning-darker" />
     </RadzenCard>
 }
-<RadzenChart>
-    
-    <RadzenLineSeries Smooth="false" Data="@ChartValues" Title="KW" CategoryProperty="ValueX" ValueProperty="ValueY" RenderingOrder="1">
+
+@if (isLoading)
+{
+    <svg width="200" height="200" viewBox="0 0 100 100" class="loading">
+        <polyline class="line-cornered stroke-still" points="0,0 100,0 100,100" stroke-width="10" fill="none"></polyline>
+        <polyline class="line-cornered stroke-still" points="0,0 0,100 100,100" stroke-width="10" fill="none"></polyline>
+        <polyline class="line-cornered stroke-animation" points="0,0 100,0 100,100" stroke-width="10" fill="none"></polyline>
+        <polyline class="line-cornered stroke-animation" points="0,0 0,100 100,100" stroke-width="10" fill="none"></polyline>
+    </svg>
+}
+<RadzenChart @ref="chartRef">
+    <RadzenLineSeries Smooth="false" Data="@ChartValues" Title="MW" CategoryProperty="ValueX" ValueProperty="ValueY" RenderingOrder="1">
         <RadzenSeriesTrendLine Visible="@Trend" Stroke="var(--rz-danger-dark)" LineType="LineType.Dashed" />
         <RadzenSeriesMedianLine Visible="@Median" Stroke="var(--rz-success-dark)" LineType="LineType.Dotted" />
         <RadzenSeriesMeanLine Visible="@Mean" Stroke="var(--rz-info-dark)" LineType="LineType.Dotted" />
         <RadzenSeriesModeLine Visible="@Mode" Stroke="var(--rz-warning-darker)" LineType="LineType.Dotted" />
     </RadzenLineSeries>
-    <RadzenCategoryAxis Padding="20" Formatter="@FormatValueX"/>
+    <RadzenCategoryAxis Padding="20" Formatter="@FormatValueX">
+        <RadzenGridLines Visible="false" />
+        <RadzenAxisTitle Text="@AxisTextY" />
+    </RadzenCategoryAxis>
     <RadzenValueAxis Formatter="@FormatValueY">
         <RadzenGridLines Visible="true" />
         <RadzenAxisTitle Text="@AxisTextX" />
@@ -30,6 +43,13 @@
 </RadzenChart>
 
 @code {
+    RadzenChart? chartRef;
+
+    List<ChartValueBase> chartValues = new();
+
+    int pos = 0;
+    bool isLoading = true;
+
     [Parameter]
     public bool Trend { get; set; } = true;
     [Parameter]
@@ -42,13 +62,92 @@
     [Parameter]
     public bool ShowOptionsCard { get; set; } = false;
 
-    //[Parameter]
-    //public string AxisTextY { get; set; } = "";
+    [Parameter]
+    public int NumberOfLabels { get; set; } = 10;
+
+    [Parameter]
+    public string AxisTextY { get; set; } = "";
     [Parameter]
     public string AxisTextX { get; set; } = "";
 
     [Parameter]
-    public List<ChartValueBase> ChartValues { get; set; } = new();
+    public int MaxEntries { get; set; } = 150;
+
+    [Parameter]
+    public List<ChartValueBase> Values { get; set; } = new();
+
+    public List<ChartValueBase> ChartValues => chartValues;
+
+
+    public void Refresh()
+    {
+        isLoading = true;
+        StateHasChanged();
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        base.OnParametersSet();
+
+        if (!isLoading)
+        {
+            return;
+        }
+
+        if (Values.Count != 0 && Values.Count < MaxEntries)
+        {
+            isLoading = false;
+            ChartValues.ReplaceValues(Values);
+        }
+        else
+        {
+            var each = Values.Count / MaxEntries;
+            ChartValues.ReplaceValues(Values.GetNth(each));
+        }
+
+        if (chartRef != null)
+        {
+            await chartRef.Reload();
+        }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (isLoading && Values.Count >= MaxEntries)
+        {
+            await Task.Run(() => ChartValues.ReplaceValues<ChartValueBase>(GetChartValues()));
+            if (chartRef != null)
+            {
+                isLoading = false;
+                await chartRef.Reload();
+                StateHasChanged();
+            }
+        }
+    }
+
+    private List<ChartValueBase> GetChartValues()
+    {
+        pos = 0;
+
+        List<ChartValueBase> result;
+        if (Values.Count <= MaxEntries)
+        {
+            result = Values;
+        }
+        else
+        {
+            result = Values.SplitIntoNChunks<ChartValueBase>(MaxEntries)
+                        .Select(list =>
+                            new ChartValueBase
+                                {
+                                    ValueX = list.First().ValueX,
+                                    ValueY = list.Average(v => v.ValueY)
+                                }).ToList();
+        }
+        return result;
+    }
 
     string FormatValueY(object value)
     {
@@ -57,6 +156,11 @@
 
     string FormatValueX(object value)
     {
-        return ""; //value?.ToString() ?? "";
+        if (value != null)
+        {
+            var shouldDisplay = (pos++ % (MaxEntries / NumberOfLabels)) == 0;
+            return shouldDisplay ? value.ToString() ?? "" : "";
+        }
+        return "";
     }
 }
