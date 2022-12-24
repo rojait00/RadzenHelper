@@ -65,7 +65,7 @@
     public bool ShowOptionsCard { get; set; } = false;
 
     [Parameter]
-    public int NumberOfLabels { get; set; } = 10;
+    public int NumberOfLabels { get; set; } = 7;
 
     [Parameter]
     public string AxisTextY { get; set; } = "";
@@ -144,7 +144,7 @@
                         .Select(list =>
                             new ChartValueBase
                                 {
-                                    ValueX = list.First().ValueX,
+                                    ValueX = list.FirstOrDefault(x => x != null)?.ValueX ?? "",
                                     ValueY = list.Average(v => v.ValueY)
                                 }).ToList();
         }
@@ -158,10 +158,11 @@
 
     string FormatValueX(object value)
     {
-        if (value != null)
+        var str = value?.ToString();
+        if (!string.IsNullOrEmpty(str))
         {
-            var shouldDisplay = (pos++ % (MaxEntries / NumberOfLabels)) == 0;
-            return shouldDisplay ? value.ToString() ?? "" : "";
+            var shouldDisplay = (pos++ % (Math.Min(ChartValues.Count, MaxEntries) / NumberOfLabels)) == 0;
+            return shouldDisplay ? str : "";
         }
         return "";
     }

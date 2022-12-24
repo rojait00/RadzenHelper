@@ -1,0 +1,40 @@
+﻿<RadzenCard class="rz-shadow-5" Style="@Style">
+    <div class="card-container">
+        <div class="table-row">
+            @if (!string.IsNullOrEmpty(Headline))
+            {
+                <h3>@Headline</h3>
+            }
+        </div>
+        @if (ChildContent != null)
+        {
+            <div class="table-row card-body">
+                <div class="table-cell body-content-outer-wrapper">
+                    <div class="body-content-inner-wrapper">
+                        <div class="body-content">
+                            @ChildContent
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter]
+    public string? Height { get; set; }
+
+    [Parameter]
+    public string? Width { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment? ChildContent { get; set; }
+
+    string Style => (string.IsNullOrEmpty(Height) ? "" : $"height: {Height};")
+                      + (string.IsNullOrEmpty(Width) ? "" : $" width: {Width};");
+
+    [Parameter]
+    public string Headline { get; set; } = "";
+}
