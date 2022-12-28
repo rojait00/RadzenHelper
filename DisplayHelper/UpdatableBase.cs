@@ -23,7 +23,14 @@ namespace RadzenHelper
 
         public static T GetNew<T>() where T : UpdatableBase
         {
-            return Activator.CreateInstance<T>();
+            var instance = Activator.CreateInstance<T>();
+            instance.FillProperties();
+            return instance;
+        }
+
+        public virtual void FillProperties()
+        {
+
         }
 
         public virtual T Update<T>(T newObject) where T : UpdatableBase
