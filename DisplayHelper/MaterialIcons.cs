@@ -1348,6 +1348,8 @@ namespace RadzenHelper.DisplayHelper
 
         public static string QuestionAnswer => "question_answer";
 
+        public static string QuestionMark => "question_mark";
+
         public static string Queue => "queue";
 
         public static string QueueMusic => "queue_music";
@@ -1881,7 +1883,5 @@ namespace RadzenHelper.DisplayHelper
         public static string ZoomOut => "zoom_out";
 
         public static string ZoomOutMap => "zoom_out_map";
-
-
     }
 }
