@@ -53,7 +53,7 @@
     bool isLoading = true;
 
     [Parameter]
-    public bool Trend { get; set; } = true;
+    public bool Trend { get; set; } = false;
     [Parameter]
     public bool Median { get; set; } = false;
     [Parameter]
@@ -153,11 +153,12 @@
 
     string FormatValueY(object value)
     {
-        return value?.ToString() ?? "";
+        return ((double?)value)?.ToString("N2") ?? "";
     }
 
     string FormatValueX(object value)
     {
+        // ToDo: always first an last -> NumberOfLabels-2
         var str = value?.ToString();
         if (!string.IsNullOrEmpty(str))
         {

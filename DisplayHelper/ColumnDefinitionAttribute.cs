@@ -38,5 +38,10 @@ namespace RadzenHelper
         /// default: false
         /// </summary>
         public bool AllowMultipleValues { get; set; } = false;
+
+        /// <summary>
+        /// Used in EasyList to display string representation of complex objects
+        /// </summary>
+        public Func<object?, string>? StringConverter { get; set; } = null;
     }
 }

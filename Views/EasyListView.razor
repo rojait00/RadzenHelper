@@ -27,7 +27,7 @@
                         @{
                             SetItem(item, info);
                         }
-                        @(values[(item, info)].GetValueAsString())
+                        @(values[(item, info)].GetValueAsString(attribute))
                     </Template>
                     <EditTemplate Context="item">
                         @{
@@ -191,12 +191,16 @@
             }
         }
 
-        public string GetValueAsString()
+        public string GetValueAsString(ColumnDefinitionAttribute attribute)
         {
-            var hasName = Value as IHasName;
-            if (hasName != null)
+            if (Value is IHasName hasName)
             {
                 return hasName.Name ?? "N/A";
+            }
+
+            if (attribute.StringConverter != null)
+            {
+                return attribute.StringConverter(Value);
             }
 
             return Value?.ToString() ?? "N/A";

@@ -8,6 +8,12 @@ namespace RadzenHelper.Extensions
 {
     public static class ListExtensions
     {
+        public static void ReplaceValues<T>(this List<T> list, T newValues)
+        {
+            list.Clear();
+            list.Add(newValues);
+        }
+
         public static void ReplaceValues<T>(this List<T> list, IEnumerable<T> newValues)
         {
             list.Clear();
