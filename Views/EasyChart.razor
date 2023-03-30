@@ -28,7 +28,7 @@
     </svg>*@
 }
 <RadzenChart @ref="chartRef">
-    <RadzenLineSeries Smooth="true" Data="@ChartValues" Title="MW" CategoryProperty="ValueX" ValueProperty="ValueY" RenderingOrder="1">
+    <RadzenLineSeries Smooth="true" Data="@ChartValues" CategoryProperty="ValueX" ValueProperty="ValueY" RenderingOrder="1">
         <RadzenSeriesTrendLine Visible="@Trend" Stroke="var(--rz-danger-dark)" LineType="LineType.Dashed" />
         <RadzenSeriesMedianLine Visible="@Median" Stroke="var(--rz-success-dark)" LineType="LineType.Dotted" />
         <RadzenSeriesMeanLine Visible="@Mean" Stroke="var(--rz-info-dark)" LineType="LineType.Dotted" />

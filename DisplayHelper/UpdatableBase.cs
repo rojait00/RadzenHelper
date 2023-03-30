@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,8 @@ namespace RadzenHelper
         public Guid Id { get; set; } = Guid.NewGuid();
 
         public virtual bool IsReadOnly { get; set; } = false;
+
+        internal bool HasBeenCleared { get; set; } = false;
 
         public UpdatableBase()
         {
@@ -46,7 +49,7 @@ namespace RadzenHelper
                 if (property.PropertyType == typeof(UpdatableBase))
                 {
                     var oldValue = (UpdatableBase?)property.GetValue(this) ?? new();
-                    var value = (UpdatableBase?)property.GetValue(newObject)  ?? new();
+                    var value = (UpdatableBase?)property.GetValue(newObject) ?? new();
                     oldValue.Update(value);
                 }
                 else
@@ -62,6 +65,11 @@ namespace RadzenHelper
         public static string GetDisplayName()
         {
             return "Row";
+        }
+
+        internal object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }
